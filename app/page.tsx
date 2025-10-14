@@ -3,12 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import PanelDashboard from "@/components/PanelDashboard";
 import { LoginButton } from "@/components/LoginButton";
-import { LogoutButton } from "@/components/LogoutButton";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
+  if (!session?.user) {
     return (
       <main className="flex flex-col items-center justify-center min-h-screen p-8">
         <h1 className="text-3xl font-bold mb-4">Bienvenido a la App 🌱</h1>
@@ -17,9 +16,9 @@ export default async function HomePage() {
     );
   }
 
-  // Nos aseguramos de que user tenga un id
+  // Protegemos el id y asignamos un valor por defecto si no existe
   const userWithId = {
-    id: session.user.id || 0, // reemplaza con el id real de tu DB si es necesario
+    id: Number((session.user as any).id) || 0,
     name: session.user.name,
     email: session.user.email,
     image: session.user.image,

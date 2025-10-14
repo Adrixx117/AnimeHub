@@ -4,7 +4,11 @@ import NextAuth, { DefaultSession } from "next-auth";
 declare module "next-auth" {
   interface Session {
     user: {
-      id: number; // ahora el user tiene id como number
+      id: number; // ahora TypeScript sabe que hay un id
     } & DefaultSession["user"];
+  }
+
+  interface User {
+    id: number;
   }
 }

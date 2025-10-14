@@ -3,7 +3,6 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { AdapterUser } from "next-auth/adapters";
-import { Session } from "next-auth";
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -15,9 +14,9 @@ export const authOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async session({ session, user }: { session: Session; user: AdapterUser }) {
+    async session({ session, user }: { session: any; user: AdapterUser }) {
       if (session.user) {
-        session.user.id = Number(user.id); // Convertimos string a number
+        session.user.id = Number(user.id); // ya funciona porque extendimos Session
       }
       return session;
     },
