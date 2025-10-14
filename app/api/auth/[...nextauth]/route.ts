@@ -1,11 +1,20 @@
-import NextAuth, { AuthOptions } from "next-auth";
+export const dynamic = "force-dynamic";
+
+import NextAuth, { DefaultSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
+import { AdapterUser } from "next-auth/adapters";
 
-export const dynamic = "force-dynamic"; // 👈 evita el error de build
+declare module "next-auth" {
+  interface Session {
+    user: DefaultSession["user"] & {
+      id: number;
+    };
+  }
+}
 
-export const authOptions: AuthOptions = {
+export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
@@ -15,10 +24,15 @@ export const authOptions: AuthOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async session({ session, user }) {
+    async session({
+      session,
+      user,
+    }: {
+      session: any;
+      user: AdapterUser;
+    }) {
       if (session.user) {
-        // @ts-ignore — añadimos id manualmente
-        session.user.id = user.id;
+        session.user.id = Number(user.id);
       }
       return session;
     },
@@ -26,5 +40,4 @@ export const authOptions: AuthOptions = {
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };
