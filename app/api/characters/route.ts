@@ -1,26 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
-  const characters = await prisma.character.findMany();
-  return NextResponse.json(characters);
-}
-
-export async function POST(req: NextRequest) {
-  const { name, series, image, userId } = await req.json();
-
-  if (!userId) {
-    return NextResponse.json({ error: "userId es obligatorio" }, { status: 400 });
+export const GET = async () => {
+  try {
+    const characters = await prisma.character.findMany();
+    return NextResponse.json(characters);
+  } catch (error) {
+    console.error("Error fetching characters:", error);
+    return NextResponse.json({ error: "Error fetching characters" }, { status: 500 });
   }
+};
 
-  const newCharacter = await prisma.character.create({
-    data: {
-      name,
-      series,
-      image,
-      user: { connect: { id: userId } },
-    },
-  });
+export const POST = async (req: NextRequest) => {
+  try {
+    const { name, series, image, userId } = await req.json();
 
-  return NextResponse.json(newCharacter);
-}
+    if (!userId || typeof userId !== "number") {
+      return NextResponse.json({ error: "userId es obligatorio y debe ser un número" }, { status: 400 });
+    }
+
+    const newCharacter = await prisma.character.create({
+      data: {
+        name,
+        series,
+        image,
+        user: { connect: { id: userId } },
+      },
+    });
+
+    return NextResponse.json(newCharacter);
+  } catch (error) {
+    console.error("Error creating character:", error);
+    return NextResponse.json({ error: "Error creating character" }, { status: 500 });
+  }
+};
