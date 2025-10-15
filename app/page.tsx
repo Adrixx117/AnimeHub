@@ -1,6 +1,6 @@
 // app/page.tsx
 import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import PanelDashboard from "@/components/PanelDashboard";
 import { LoginButton } from "@/components/LoginButton";
 
@@ -16,7 +16,6 @@ export default async function HomePage() {
     );
   }
 
-  // Protegemos el id y asignamos un valor por defecto si no existe
   const userWithId = {
     id: Number((session.user as any).id) || 0,
     name: session.user.name,
