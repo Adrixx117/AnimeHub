@@ -1,13 +1,31 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      "static.wikia.nocookie.net",
-      "upload.wikimedia.org",
-      "i.imgur.com",
-      "pbs.twimg.com",
-      "images.unsplash.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "static.wikia.nocookie.net",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "i.imgur.com",
+      },
+      {
+        protocol: "https",
+        hostname: "pbs.twimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
   },
 };
 
